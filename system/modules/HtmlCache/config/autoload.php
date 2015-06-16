@@ -24,7 +24,7 @@ ClassLoader::addNamespaces(array
 ClassLoader::addClasses(array
 (
     // classes
-    'sioweb\contao\extensions\cache\Cache'     => 'system/modules/HtmlCache/classes/Cache.php',
+    'sioweb\contao\extensions\cache\SWCache'     => 'system/modules/HtmlCache/classes/SWCache.php',
 ));
 
 if($_POST['generate_html_cache'] == 1 || $_GET['test'] == 1) {
@@ -38,6 +38,6 @@ if($_POST['generate_html_cache'] == 1 || $_GET['test'] == 1) {
 /* Templatename => Pfad zu den Templates */
 TemplateLoader::addFiles(array
 (
-    'mod_dummy'   => 'system/modules/dummy/templates',
-    'be_dummy'    => 'system/modules/dummy/templates/be',
+    // 'mod_dummy'   => 'system/modules/dummy/templates',
+    // 'be_dummy'    => 'system/modules/dummy/templates/be',
 ));

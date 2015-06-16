@@ -15,13 +15,13 @@ use Contao;
  * @package sioweb.contao.extensions.cache
  * @copyright Sascha Weidner, Sioweb
  */
-
-class Cache extends \Backend {
+if(!class_exists('SWCache')) {
+class SWCache extends \Backend {
 
   public function extendDCA($strName) {
     if(empty($GLOBALS['TL_DCA'][$strName]['config']['onsubmit_callback']))
       $GLOBALS['TL_DCA'][$strName]['config']['onsubmit_callback'] = array();
-    $GLOBALS['TL_DCA'][$strName]['config']['onsubmit_callback'][] = array('Cache','generateSiteCache');
+    $GLOBALS['TL_DCA'][$strName]['config']['onsubmit_callback'][] = array('SWCache','generateSiteCache');
   }
 
   public function generateSiteCache() {
@@ -77,4 +77,4 @@ class Cache extends \Backend {
       fwrite($fp, $out);
       fclose($fp);
   }
-}
+}}

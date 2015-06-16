@@ -11,9 +11,10 @@ if(empty($Path['basename']) || $Path['basename'] == '.html' || $Path['dirname'] 
 if($_POST['generate_html_cache'] == 1 || $_GET['test'] == 1) {
 
   define('BYPASS_TOKEN_CHECK',true);
-  define('HTML_CACHE_TAGS',true);
   ignore_user_abort(true);
   set_time_limit(0);
+
+  $_SERVER['REQUEST_URI'] = 'sendeplan.html';
   /**
    * Set the script name
    */
@@ -32,14 +33,19 @@ if($_POST['generate_html_cache'] == 1 || $_GET['test'] == 1) {
   while($Page->next()) {
     if($Page->type != 'regular' || !$Page->alias)
       continue;
-    $arrPages[] = $Page->id;
+    $arrPages[] = array('id'=>$Page->id,'alias'=>$Page->alias);
   }
 
   if(!is_dir(TL_ROOT.'/system/cache/generated_html/'))
     mkdir(TL_ROOT.'/system/cache/generated_html');
 
-  foreach($arrPages as $page_id) {
-    $objPage = PageModel::findPublishedByIdOrAlias($page_id);
+  foreach($arrPages as $pagedata) {
+    
+    Environment::set('indexFreeRequest',$pagedata['alias'].'.html');
+    Environment::set('request',$pagedata['alias'].'.html');
+    Environment::set('requestUri',$pagedata['alias'].'.html');
+
+    $objPage = PageModel::findPublishedByIdOrAlias($pagedata['id']);
 
     if($objPage instanceof \Model\Collection)
       $objPage = $objPage->current();
@@ -49,6 +55,7 @@ if($_POST['generate_html_cache'] == 1 || $_GET['test'] == 1) {
 
     if(!is_bool($objPage->protected))
       $objPage->loadDetails();
+
     
     $File = new \File('system/cache/generated_html/'.$objPage->alias.'.html');
     // ob_start();
@@ -73,6 +80,9 @@ if($_POST['generate_html_cache'] == 1 || $_GET['test'] == 1) {
   define('TL_MODE', 'FE');
   require __DIR__ . '/system/initialize.php';
 
+  
+  // echo Environment::get('indexFreeRequest');
+
   ob_start();
   include 'system/cache/generated_html/'.$Path['basename'];
   $content = ob_get_contents();
@@ -84,7 +94,7 @@ if($_POST['generate_html_cache'] == 1 || $_GET['test'] == 1) {
         global $objPage;
 
         $objPage = PageModel::findByAlias($alias);
-        return $this->replaceInsertTags($strContent);
+        return $this->replaceInsertTags($strContent,false);
       }
     }
 

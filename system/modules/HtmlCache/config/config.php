@@ -15,10 +15,10 @@
 $GLOBALS['html_cache'] = array('element'=>array(),'module'=>array());
 
 if(TL_MODE == 'BE') {
-  $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('sioweb\contao\extensions\cache\Cache', 'extendDCA');
+  $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('sioweb\contao\extensions\cache\SWCache', 'extendDCA');
 }
 
 if($_POST['generate_html_cache'] == 1) {
-  $GLOBALS['TL_HOOKS']['getContentElement'][] = array('sioweb\contao\extensions\cache\Cache', 'replaceDynamicContent');
-  $GLOBALS['TL_HOOKS']['getFrontendModule'][] = array('sioweb\contao\extensions\cache\Cache', 'replaceDynamicModule');
+  $GLOBALS['TL_HOOKS']['getContentElement'][] = array('sioweb\contao\extensions\cache\SWCache', 'replaceDynamicContent');
+  $GLOBALS['TL_HOOKS']['getFrontendModule'][] = array('sioweb\contao\extensions\cache\SWCache', 'replaceDynamicModule');
 }
