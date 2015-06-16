@@ -11,5 +11,7 @@
  * @package sioweb.contao.extensions.cache
  * @copyright Sascha Weidner, Sioweb
  */
-
-$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('sioweb\contao\extensions\cache\Cache', 'extendDCA');
+if(TL_MODE == 'BE') {
+  $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('sioweb\contao\extensions\cache\Cache', 'extendDCA');
+  $GLOBALS['TL_HOOKS']['getContentElement'][] = array('sioweb\contao\extensions\cache\Cache', 'replaceDynamics');
+}

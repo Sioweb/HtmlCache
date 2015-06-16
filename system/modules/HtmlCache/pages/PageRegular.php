@@ -11,6 +11,7 @@ class PageRegular extends \Contao\PageRegular {
     parent::generate($objPage,$blnCheckRequest);
     $Data = $this->Template->parse();
     $Data = $this->replaceDynamicScriptTags($Data);
+    // return $Data;
     return $this->minifyHtml($Data);
   }
 

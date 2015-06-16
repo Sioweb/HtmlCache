@@ -33,6 +33,12 @@ class Cache extends \Backend {
     $this->curl_post_async($url,$data);
   }
 
+  public function replaceDynamics($objRow, $strBuffer, $objModule) {
+    if($objRow->dynamicContent)
+      return '{{insert_content::'.$objRow->id.'}}';
+    return $strBuffer;
+  }
+
   public function curl_post_async($url, $params)
   {
       foreach ($params as $key => &$val) {

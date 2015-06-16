@@ -1,0 +1,14 @@
+<?xml version="1.0" ?><xliff version="1.1">
+  <file datatype="php" original="system/modules/core/languages/en/tl_content.php" source-language="en">
+    <body>
+      <trans-unit id="tl_content.dynamicContent.0">
+        <source>Dynamic content</source>
+        <target>Dynamischer Inhalt</target>
+      </trans-unit>
+      <trans-unit id="tl_content.dynamicContent.1">
+        <source>This will add the element as inserttag.</source>
+        <target>Ist diese Box aktiviert, wird das Inhaltselement im Html Cache als InsertTag ausgegeben.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

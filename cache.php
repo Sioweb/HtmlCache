@@ -1,6 +1,12 @@
 <?php
 
 $Path = pathinfo($_SERVER['SCRIPT_URI']);
+if(empty($Path['basename']) || $Path['basename'] == '.html' || $Path['dirname'] == 'http:')
+  $Path = array(
+    'basename' => 'index.html',
+    'filename' => 'index',
+    'extension' => 'html'
+  );
 
 if($_POST['generate_html_cache'] == 1 || $_GET['test'] == 1) {
 
@@ -84,7 +90,6 @@ if($_POST['generate_html_cache'] == 1 || $_GET['test'] == 1) {
     $htmlCache = new htmlCache();
     $content = $htmlCache->run($content,$Path['filename']);
   }
-
   echo $content;
 } else {
   include 'index.php';

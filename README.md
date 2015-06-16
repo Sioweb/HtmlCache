@@ -37,7 +37,10 @@ Es werden nur Reguläre Seiten gesichert und auch nur dann, wenn sie einen Alias
 
 Seiten die einen laufend dynamischen Inhalt haben, weil sie eine externe Datenquelle oder zeitabhängige Inhalte ausgeben, dürfen **nicht** gesichert werden. Die gesicherten Seiten sind pures HTMl mit InsertTags. Die InsertTags sind dabei das einzig dynamische dass der Cache noch hat.
 
+##Version 0.9.5
+
+Dynamische Inhalte können markiert werden. Öffnet das dynamische Inhaltselement und klickt an, dass es sich um ein Dynamisches Element handelt. Dieses Element wird nun nachträglich in den HTML-Cache geladen. Je mehr dynamische Elemente ihr nutzt, umso weniger sinn macht es den Cache überhaupt zu nutzen.
+
 ##Future Features
 
-- Dynamische Inhaltselemente / Module durch InsertTags ersetzen
 - Pagination von News Cachen
