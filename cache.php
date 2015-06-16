@@ -11,6 +11,7 @@ if(empty($Path['basename']) || $Path['basename'] == '.html' || $Path['dirname'] 
 if($_POST['generate_html_cache'] == 1 || $_GET['test'] == 1) {
 
   define('BYPASS_TOKEN_CHECK',true);
+  define('HTML_CACHE_TAGS',true);
   ignore_user_abort(true);
   set_time_limit(0);
   /**
@@ -90,6 +91,7 @@ if($_POST['generate_html_cache'] == 1 || $_GET['test'] == 1) {
     $htmlCache = new htmlCache();
     $content = $htmlCache->run($content,$Path['filename']);
   }
+
   echo $content;
 } else {
   include 'index.php';

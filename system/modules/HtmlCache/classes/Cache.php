@@ -33,9 +33,23 @@ class Cache extends \Backend {
     $this->curl_post_async($url,$data);
   }
 
-  public function replaceDynamics($objRow, $strBuffer, $objModule) {
+  public function replaceDynamicContent($objRow, $strBuffer, $objModule) {
+    if(TL_MODE == 'BE')
+      return $strBuffer;
+
     if($objRow->dynamicContent)
       return '{{insert_content::'.$objRow->id.'}}';
+
+    return $strBuffer;
+  }
+
+  public function replaceDynamicModule($objRow, $strBuffer, $objModule) {
+    if(TL_MODE == 'BE')
+      return $strBuffer;
+
+    if($objRow->dynamicContent)
+      return '{{insert_module::'.$objRow->id.'}}';
+
     return $strBuffer;
   }
 

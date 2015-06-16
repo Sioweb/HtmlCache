@@ -1,0 +1,14 @@
+<?xml version="1.0" ?><xliff version="1.1">
+  <file datatype="php" original="system/modules/core/languages/en/tl_module.php" source-language="en">
+    <body>
+      <trans-unit id="tl_module.dynamicContent.0">
+        <source>Dynamic module</source>
+        <target>Dynamisches Modul</target>
+      </trans-unit>
+      <trans-unit id="tl_module.dynamicContent.1">
+        <source>This will add the module as inserttag.</source>
+        <target>Ist diese Box aktiviert, wird das Modul im Html Cache als InsertTag ausgegeben.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
