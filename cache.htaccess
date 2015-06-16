@@ -1,0 +1,4 @@
+DirectoryIndex cache.php index.php
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule .*\.html$ cache.php [L]
