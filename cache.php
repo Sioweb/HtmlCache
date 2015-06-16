@@ -40,10 +40,14 @@ if($_POST['generate_html_cache'] == 1 || $_GET['test'] == 1) {
     mkdir(TL_ROOT.'/system/cache/generated_html');
 
   foreach($arrPages as $pagedata) {
-    
-    Environment::set('indexFreeRequest',$pagedata['alias'].'.html');
-    Environment::set('request',$pagedata['alias'].'.html');
-    Environment::set('requestUri',$pagedata['alias'].'.html');
+
+    $request = '';
+    if($pagedata['alias'] !== 'index')
+      $request = $pagedata['alias'].'.html';
+
+    Environment::set('indexFreeRequest',$request);
+    Environment::set('request',$request);
+    Environment::set('requestUri',$request);
 
     $objPage = PageModel::findPublishedByIdOrAlias($pagedata['id']);
 
