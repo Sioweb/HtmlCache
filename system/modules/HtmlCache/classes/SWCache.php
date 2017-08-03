@@ -25,7 +25,7 @@ class SWCache extends \Backend {
   }
 
   public function generateSiteCache() {
-    $url = 'http://'.\Environment::get('host').'/cache.php';
+    $url = 'http'.(\Environment::get('ssl')?'s':'').'://'.\Environment::get('host').'/cache.php';
     $data = array(
       'generate_html_cache' => 1
     );
@@ -63,9 +63,18 @@ class SWCache extends \Backend {
 
       $parts=parse_url($url);
 
-      $fp = fsockopen($parts['host'],
-          isset($parts['port'])?$parts['port']:80,
-          $errno, $errstr, 30);
+      if(empty($parts['port'])) {
+        $parts['port'] = 80;
+      }
+
+      if($parts['scheme'] === 'https') {
+        $parts['port'] = 443;
+        if(strpos($parts['host'],'ssl://') === false) {
+          $fp = fsockopen('ssl://'.$parts['host'],$parts['port'],$errno,$errstr,30);
+        }
+      } else {
+          $fp = fsockopen('ssl://'.$parts['host'],$parts['port'],$errno,$errstr,30);
+      }
 
       $out = "POST ".$parts['path']." HTTP/1.1\r\n";
       $out.= "Host: ".$parts['host']."\r\n";
@@ -75,6 +84,14 @@ class SWCache extends \Backend {
       if (isset($post_string)) $out.= $post_string;
 
       fwrite($fp, $out);
+
+      // echo $out;
+      // echo '<br><br>';
+
+      // while (!feof($fp)) {
+      //     echo fgets($fp, 128);
+      // }
+      // die();
       fclose($fp);
   }
 }}

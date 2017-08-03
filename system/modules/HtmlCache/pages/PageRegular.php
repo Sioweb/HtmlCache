@@ -10,9 +10,12 @@ class PageRegular extends \Contao\PageRegular {
   public function generate($objPage, $blnCheckRequest=false) {
     parent::generate($objPage,$blnCheckRequest);
     $Data = $this->Template->parse();
+    // $Data = str_replace('[[','[---[',$Data);
     $Data = $this->replaceDynamicScriptTags($Data);
+    // $Data = $this->minifyHtml($Data);
     // return $Data;
-    return $this->minifyHtml($Data);
+    
+    return $Data;
   }
 
   /**
