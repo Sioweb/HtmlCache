@@ -12,8 +12,7 @@ class PageRegular extends \Contao\PageRegular {
     $Data = $this->Template->parse();
     // $Data = str_replace('[[','[---[',$Data);
     $Data = $this->replaceDynamicScriptTags($Data);
-    // $Data = $this->minifyHtml($Data);
-    // return $Data;
+    $Data = $this->minifyHtml($Data);
     
     return $Data;
   }
