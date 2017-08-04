@@ -19,6 +19,7 @@ if($_POST['generate_html_cache'] == 1 || $_GET['generate_html_cache'] == 1) {
    * Set the script name
    */
   define('TL_SCRIPT', 'index.php');
+  define('BE_USER_LOGGED_IN',false);
 
   /**
    * Initialize the system
@@ -43,11 +44,20 @@ if($_POST['generate_html_cache'] == 1 || $_GET['generate_html_cache'] == 1) {
     mkdir(TL_ROOT.'/system/cache/generated_html');
   }
 
+  $files = scandir(TL_ROOT.'/system/cache/generated_html/');
+  foreach($files as $file) {
+    if($file === '.' || $file === '..') {
+      continue;
+    }
+    unlink(TL_ROOT.'/system/cache/generated_html/'.$file);
+  }
+
   foreach($arrPages as $pagedata) {
 
     $request = '';
-    if($pagedata['alias'] !== 'index')
+    if($pagedata['alias'] !== 'index') {
       $request = $pagedata['alias'].'.html';
+    }
 
     Environment::set('indexFreeRequest',$request);
     Environment::set('request',$request);
@@ -89,8 +99,6 @@ if($_POST['generate_html_cache'] == 1 || $_GET['generate_html_cache'] == 1) {
   require __DIR__ . '/system/initialize.php';
 
   
-  // echo Environment::get('indexFreeRequest');
-
   ob_start();
   include 'system/cache/generated_html/'.$Path['basename'];
   $content = ob_get_contents();
