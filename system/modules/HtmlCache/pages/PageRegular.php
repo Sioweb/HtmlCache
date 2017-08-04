@@ -1,5 +1,7 @@
 <?php 
 
+namespace sioweb\contao\extensions\cache;
+
 class PageRegular extends \Contao\PageRegular {
 
   /**
@@ -8,9 +10,12 @@ class PageRegular extends \Contao\PageRegular {
    * @param boolean
    */
   public function generate($objPage, $blnCheckRequest=false) {
+    $objLayout = \LayoutModel::findByPk($objPage->layout);
     parent::generate($objPage,$blnCheckRequest);
+    $this->Template->title = $this->replaceInsertTags($objLayout->titleTag,$objPage->alias);
+    $this->Template->output();
     $Data = $this->Template->parse();
-    // $Data = str_replace('[[','[---[',$Data);
+
     $Data = $this->replaceDynamicScriptTags($Data);
     $Data = $this->minifyHtml($Data);
     

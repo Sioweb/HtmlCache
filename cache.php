@@ -1,5 +1,5 @@
 <?php
-
+$_SESSION['DISABLE_CACHE'] = 1;
 $Path = pathinfo($_SERVER['SCRIPT_URI']);
 if(empty($Path['basename']) || $Path['basename'] == '.html' || $Path['dirname'] == 'http:' || $Path['dirname'] == 'https:') {
   $Path = array(
@@ -53,11 +53,16 @@ if($_POST['generate_html_cache'] == 1 || $_GET['generate_html_cache'] == 1) {
   }
 
   foreach($arrPages as $pagedata) {
-
     $request = '';
     if($pagedata['alias'] !== 'index') {
       $request = $pagedata['alias'].'.html';
     }
+
+    ClassLoader::addClasses(array
+    (
+        // classes
+        'sioweb\contao\extensions\cache\PageRegular'     => 'system/modules/HtmlCache/pages/PageRegular.php'
+    ));
 
     Environment::set('indexFreeRequest',$request);
     Environment::set('request',$request);
@@ -69,19 +74,16 @@ if($_POST['generate_html_cache'] == 1 || $_GET['generate_html_cache'] == 1) {
       $objPage = $objPage->current();
     }
 
-    $Type = '\\'.$GLOBALS['TL_PTY'][$objPage->type];
-    $PageType = new $Type();
+    $PageType = new \sioweb\contao\extensions\cache\PageRegular();
 
     if(!is_bool($objPage->protected)) {
       $objPage->loadDetails();
     }
 
     $File = new \File('/system/cache/generated_html/'.$objPage->alias.'.html');
-    // ob_start();
-    // $PageType->generate($objPage,true);
-    // $File->write(ob_get_contents());
-    $output = $File->write($PageType->generate($objPage,true));
-    // ob_end_clean();
+
+    $output = $PageType->generate($objPage,true);
+    $File->write($output);
 
     $File->close();
     sleep(0.4);

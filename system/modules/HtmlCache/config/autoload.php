@@ -14,7 +14,6 @@
 
 ClassLoader::addNamespaces(array
 (
-    'Contao',
     'sioweb\contao\extensions\cache'
 ));
 /*
