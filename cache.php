@@ -1,13 +1,17 @@
 <?php
+
+
 $_SESSION['DISABLE_CACHE'] = 1;
 $Path = pathinfo($_SERVER['SCRIPT_URI']);
 if(empty($Path['basename']) || $Path['basename'] == '.html' || $Path['dirname'] == 'http:' || $Path['dirname'] == 'https:') {
   $Path = array(
+    'url' => '',
     'basename' => 'index.html',
     'filename' => 'index',
     'extension' => 'html'
   );
 }
+$Path['url'] = $_SERVER['SERVER_NAME'];
 
 if($_POST['generate_html_cache'] == 1 || $_GET['generate_html_cache'] == 1) {
   define('BYPASS_TOKEN_CHECK',true);
@@ -31,6 +35,14 @@ if($_POST['generate_html_cache'] == 1 || $_GET['generate_html_cache'] == 1) {
   $Page = \PageModel::findByHtmlCache(1);
   if(!$Page) {
     return;
+  }
+
+  function getRootPage($id) {
+    $Page = \PageModel::findByPk($id);
+    if($Page->type !== 'root') {
+      $Page = getRootPage($Page->pid);
+    }
+    return $Page;
   }
 
   while($Page->next()) {
@@ -80,7 +92,13 @@ if($_POST['generate_html_cache'] == 1 || $_GET['generate_html_cache'] == 1) {
       $objPage->loadDetails();
     }
 
-    $File = new \File('/system/cache/generated_html/'.$objPage->alias.'.html');
+    $fileName = $objPage->alias;
+    $rootPage = getRootPage($objPage->id);
+    if(!empty($rootPage->dns)) {
+      $fileName = $rootPage->dns.'.'.$fileName;
+    }
+
+    $File = new \File('/system/cache/generated_html/'.$fileName.'.html');
 
     $output = $PageType->generate($objPage,true);
     $File->write($output);
@@ -88,7 +106,7 @@ if($_POST['generate_html_cache'] == 1 || $_GET['generate_html_cache'] == 1) {
     $File->close();
     sleep(0.4);
   }
-} elseif(is_file(dirname(__FILE__).'/system/cache/generated_html/'.$Path['basename'])) {
+} elseif(is_file(dirname(__FILE__).'/system/cache/generated_html/'.$Path['url'].'.'.$Path['basename'])) {
   /**
    * Set the script name
    */
@@ -99,33 +117,44 @@ if($_POST['generate_html_cache'] == 1 || $_GET['generate_html_cache'] == 1) {
    */
   define('TL_MODE', 'FE');
   require __DIR__ . '/system/initialize.php';
+  // echo 'system/cache/generated_html/'.$Path['url'].'.'.$Path['basename'];
 
-  
   ob_start();
-  include 'system/cache/generated_html/'.$Path['basename'];
+  include 'system/cache/generated_html/'.$Path['url'].'.'.$Path['basename'];
   $content = ob_get_contents();
   ob_end_clean();
 
+  class htmlCache extends \Frontend {
+    public function run($strContent,$alias) {
+      global $objPage;
+
+      $objPage = PageModel::findByAlias($alias);
+      // $strContent = str_replace('[---[','[[',$strContent);
+      // $strContent = $this->replaceDynamicScriptTags($strContent,false);
+      return $this->replaceInsertTags($strContent,false);
+    }
+    public function hooks($strContent) {
+      if(isset($GLOBALS['TL_HOOKS']['htmlCacheOutput']) && is_array($GLOBALS['TL_HOOKS']['htmlCacheOutput']))
+      {
+        foreach ($GLOBALS['TL_HOOKS']['htmlCacheOutput'] as $callback)
+        {
+          $this->import($callback[0]);
+          $strContent = $this->{$callback[0]}->{$callback[1]}($strContent, 'cache');
+        }
+      }
+      return $strContent;
+    }
+  }
+
+  $htmlCache = new htmlCache();
   if(
     (strpos($content,'&#123;&#123;') !== false && strpos($content,'&#125;&#125;') !== false) ||
-    (strpos($content,'{{') !== false && strpos($content,'}}') !== false)
+    (strpos($content,'&#123;&#123;') !== false && strpos($content,'&#125;&#125;') !== false)
   ) {
-    class htmlCache extends \Frontend {
-      public function run($strContent,$alias) {
-        global $objPage;
-
-        $objPage = PageModel::findByAlias($alias);
-        // $strContent = str_replace('[---[','[[',$strContent);
-        // $strContent = $this->replaceDynamicScriptTags($strContent,false);
-        return $this->replaceInsertTags($strContent,false);
-      }
-    }
-
-    $htmlCache = new htmlCache();
     $content = $htmlCache->run($content,$Path['filename']);
   }
  
-  echo $content;
+  echo $htmlCache->hooks($content);
 } else {
   include 'index.php';
 }

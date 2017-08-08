@@ -10,6 +10,7 @@ class PageRegular extends \Contao\PageRegular {
    * @param boolean
    */
   public function generate($objPage, $blnCheckRequest=false) {
+    
     $objLayout = \LayoutModel::findByPk($objPage->layout);
     parent::generate($objPage,$blnCheckRequest);
     $this->Template->title = $this->replaceInsertTags($objLayout->titleTag,$objPage->alias);
@@ -18,10 +19,18 @@ class PageRegular extends \Contao\PageRegular {
 
     $Data = $this->replaceDynamicScriptTags($Data);
     $Data = $this->minifyHtml($Data);
+
+    if(isset($GLOBALS['TL_HOOKS']['outputFrontendTemplate']) && is_array($GLOBALS['TL_HOOKS']['outputFrontendTemplate']))
+    {
+      foreach ($GLOBALS['TL_HOOKS']['outputFrontendTemplate'] as $callback)
+      {
+        $this->import($callback[0]);
+        $Data = $this->{$callback[0]}->{$callback[1]}($Data, 'cache');
+      }
+    }
     
     return $Data;
   }
-
   /**
    * Minify the HTML markup preserving pre, script, style and textarea tags
    *
