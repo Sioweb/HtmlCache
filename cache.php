@@ -149,7 +149,7 @@ if($_POST['generate_html_cache'] == 1 || $_GET['generate_html_cache'] == 1) {
   $htmlCache = new htmlCache();
   if(
     (strpos($content,'&#123;&#123;') !== false && strpos($content,'&#125;&#125;') !== false) ||
-    (strpos($content,'&#123;&#123;') !== false && strpos($content,'&#125;&#125;') !== false)
+    (strpos($content,'{{') !== false && strpos($content,'}}') !== false)
   ) {
     $content = $htmlCache->run($content,$Path['filename']);
   }
