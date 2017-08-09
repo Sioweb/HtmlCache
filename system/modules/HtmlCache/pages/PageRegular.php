@@ -28,6 +28,8 @@ class PageRegular extends \Contao\PageRegular {
         $Data = $this->{$callback[0]}->{$callback[1]}($Data, 'cache');
       }
     }
+
+    $Data = \StringUtil::restoreBasicEntities($Data);
     
     return $Data;
   }
